@@ -3,6 +3,7 @@ import { initialTickets } from "@/app/data";
 import { Placeholder } from "@/components/placeholder";
 import { Button } from "@/components/ui/button";
 import { ticketsPath } from "@/app/paths";
+import { TicketItem } from "@/features/ticket/components/ticketItem";
 
 type TicketPageProps = {
   params: Promise<{
@@ -30,9 +31,8 @@ const TicketPage = async ({ params }: TicketPageProps) => {
   }
 
   return (
-    <div>
-      <h2 className="text-lg">{ticket.title}</h2>
-      <p className="text-sm">{ticket.content}</p>
+    <div className="flex-1 justify-items-center animate-fade-in-from-top">
+      <TicketItem ticket={ticket} isDetail />
     </div>
   );
 };
