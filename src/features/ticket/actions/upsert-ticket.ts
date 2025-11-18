@@ -8,7 +8,8 @@ import { revalidatePath } from "next/cache";
 import {
   ActionState,
   fromErrorToActionState,
-} from "@/components/form/to-action-state";
+  toActionState,
+} from "@/components/form/utils/to-action-state";
 
 const upserTicketSchema = z.object({
   title: z.string().min(1).max(191),
@@ -40,5 +41,5 @@ export const upsertTicket = async (
     redirect(ticketsPath());
   }
 
-  return { message: "Ticket created", fieldErrors: {},payload:undefined };
+  return toActionState("SUCCESS","Ticket Created");
 };
