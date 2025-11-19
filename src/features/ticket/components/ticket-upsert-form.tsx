@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Ticket } from ".prisma/client";
 import { upsertTicket } from "@/features/ticket/actions/upsert-ticket";
 import { SubmitButton } from "@/components/form/submit-button";
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useRef } from "react";
 import { FieldError } from "@/components/form/field-error";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { Form } from "@/components/form/form";

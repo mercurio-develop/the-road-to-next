@@ -4,7 +4,6 @@ import { TicketList } from "@/features/ticket/components/ticket-list";
 import { Spinner } from "@/components/spinner";
 import { CardCompact } from "@/components/card-compact";
 import { TicketUpsertForm } from "@/features/ticket/components/ticket-upsert-form";
-import { RedirectToast } from "@/components/redirect-toast";
 
 const TicketsPage = async () => {
   return (

@@ -12,10 +12,10 @@ export default function RootTemplate({ children }: RootTemplateProps) {
   const key = JSON.stringify(params);
   console.log(key)
   return (
-    <div className="w-full" key={key}>
+    <>
       <>{children}</>
       <RedirectToast />
-    </div>
+    </>
   );
 }
 
