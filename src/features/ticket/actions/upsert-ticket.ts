@@ -12,7 +12,6 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { setCookieByKey } from "@/actions/cookies";
 import { toCent } from "@/utils/currency";
-import { getAuth } from "@/features/auth/queries/get-auth";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { isOwner } from "@/features/auth/utils/is-owner";
 

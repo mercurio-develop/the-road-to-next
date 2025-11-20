@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { homePath, signInPath, signUpPath, ticketsPath } from "@/app/paths";
+import { homePath, signInPath, signUpPath} from "@/app/paths";
 import { buttonVariants } from "@/components/ui/button";
 import { LucideKanban, LucideLogOut } from "lucide-react";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
@@ -17,21 +17,11 @@ const Header = () => {
   }
 
   const navItems = user ? (
-    <>
-      <ThemeSwitcher />
-      <Link
-        href={ticketsPath()}
-        className={buttonVariants({ variant: "default" })}
-      >
-        Tickets
-      </Link>
       <form action={signOut}>
         <SubmitButton label="Sign out" icon={<LucideLogOut />} />
       </form>
-    </>
   ) : (
     <>
-      <ThemeSwitcher />
       <Link
         href={signUpPath()}
         className={buttonVariants({ variant: "outline" })}
@@ -66,7 +56,8 @@ const Header = () => {
           <h1 className="ml-2 text-lg font-semibold">TicketBounty</h1>
         </Link>
       </div>
-      <div className="flex align-items gap-x-2">{navItems}</div>
+      <div className="flex align-items gap-x-2">      <ThemeSwitcher />
+        {navItems}</div>
     </nav>
   );
 };

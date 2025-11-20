@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ticketsPath } from "@/app/paths";
 import { Heading } from "@/components/heading";
 import { Suspense } from "react";
 import { Spinner } from "@/components/spinner";

@@ -5,10 +5,10 @@ import { Spinner } from "@/components/spinner";
 import { CardCompact } from "@/components/card-compact";
 import { TicketUpsertForm } from "@/features/ticket/components/ticket-upsert-form";
 import { getAuth } from "@/features/auth/queries/get-auth";
-import { redirect } from "next/navigation";
-import { signInPath } from "@/app/paths";
+
 
 const TicketsPage = async () => {
+  const { user } = await getAuth()
   return (
     <>
       <div className="flex-1 flex flex-col gap-y-8">
@@ -20,7 +20,7 @@ const TicketsPage = async () => {
           content={<TicketUpsertForm />}
         />
         <Suspense fallback={<Spinner />}>
-          <TicketList />
+          <TicketList userId={user?.id} />
         </Suspense>
       </div>
     </>
