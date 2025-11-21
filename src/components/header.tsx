@@ -3,10 +3,8 @@
 import Link from "next/link";
 import { homePath, signInPath, signUpPath} from "@/app/paths";
 import { buttonVariants } from "@/components/ui/button";
-import { LucideKanban, LucideLogOut } from "lucide-react";
+import { LucideKanban } from "lucide-react";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
-import { SubmitButton } from "@/components/form/submit-button";
-import { signOut } from "@/features/auth/actions/sign-out";
 import { useAuth } from "@/features/hooks/use-auth";
 import { AccountDropdown } from "@/components/account-dropdown";
 

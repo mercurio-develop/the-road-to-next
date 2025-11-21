@@ -1,4 +1,3 @@
-import { SubmitButton } from "@/components/form/submit-button";
 import { signOut } from "@/features/auth/actions/sign-out";
 import { LucideLogOut, LucideUser } from "lucide-react";
 import { User as AuthUser } from "lucia";
