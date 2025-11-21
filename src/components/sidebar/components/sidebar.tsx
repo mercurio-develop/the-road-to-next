@@ -1,10 +1,13 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { navItems } from "@/components/sidebar/constants";
 import { SideBarItem } from "@/components/sidebar/components/sidebar-item";
+import { useAuth } from "@/features/hooks/use-auth";
 
 const SideBar = () => {
+  const { user, isFetched } = useAuth();
+
   const [isTransition, setTransition] = useState(false);
   const [isOpen, setOpen] = useState(false);
 
@@ -14,25 +17,31 @@ const SideBar = () => {
     setTimeout(() => setTransition(false), 200);
   };
 
+  if (!user || !isFetched) {
+    return <div className="w-[78px] bg-secondary/20 absolute" />;
+  }
+
   return (
     <nav
       className={cn(
-        "h-screen border-r pt-24",
-        isTransition && "duration-200",
+        "animate-sidebar-from-left h-screen border-r pt-24 absolute peer",
+        isTransition && "duration-150",
         isOpen ? "md:w-60 w-[78px]" : "w-[78px]",
       )}
       onMouseEnter={() => handleToogle(true)}
       onMouseLeave={() => handleToogle(false)}
     >
       <div className="px-3 py-2">
-      <nav className="space-y-2">
-        {navItems.map((navItem)=>(
-          <SideBarItem key={navItem.title} isOpen={isOpen} navItem={navItem}/>
-        ))}
-      </nav>
+        <nav className="space-y-2">
+          {navItems.map((navItem) => (
+            <SideBarItem
+              key={navItem.title}
+              isOpen={isOpen}
+              navItem={navItem}
+            />
+          ))}
+        </nav>
       </div>
-
-
     </nav>
   );
 };

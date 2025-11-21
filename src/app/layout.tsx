@@ -33,16 +33,19 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <Header />
-        <div className="flex h-screen overflow-hidden border-collapse">
+        <div className="flex h-screen overflow-hidden border-collapse items-center">
             <SideBar/>
             <main
               className="
-            min-h-screen flex-1
-            overflow-y-auto overflow-x-hidden
-            py-24 px-8
-            bg-secondary/20
-            flex flex-col
-          "
+                duration-150
+                pl-[78px]
+                peer-hover:pl-[240px]
+                min-h-screen flex-1
+                overflow-y-auto overflow-x-hidden
+                py-24 px-8
+                bg-secondary/20
+                flex flex-col
+              "
             >
               {children}
             </main>
