@@ -29,7 +29,6 @@ const SideBar = () => {
   const { open, setOpen, toggleSidebar } = useSidebar();
 
 
-
   useEffect(() => {
     const handleToogle = async () => {
       setTransition(true);
