@@ -29,6 +29,7 @@ const SideBar = () => {
   const { open, setOpen, toggleSidebar } = useSidebar();
 
 
+
   useEffect(() => {
     const handleToogle = async () => {
       setTransition(true);
@@ -36,7 +37,7 @@ const SideBar = () => {
       setTimeout(() => setTransition(false), 200);
     };
     handleToogle();
-  }, []);
+  }, [setOpen]);
 
   if (!user || !isFetched) {
     return null;
