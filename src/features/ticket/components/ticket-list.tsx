@@ -1,8 +1,6 @@
 import { TicketItem } from "@/features/ticket/components/ticket-item";
 import { getTickets } from "@/features/ticket/queries/get-tickets";
-import { SearchInput } from "@/components/search-input";
 import { Placeholder } from "@/components/placeholder";
-import { SortSelect } from "@/components/sort-select";
 import { ParsedSearchParams } from "@/features/ticket/search-params";
 import { TicketSearchInput } from "@/features/ticket/components/ticket-search-input";
 import { TicketSortSelect } from "@/features/ticket/components/ticket-sort-select";

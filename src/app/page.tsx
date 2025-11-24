@@ -6,11 +6,10 @@ import { SearchParams } from "nuqs/server"
 import { searchParamsCache } from "@/features/ticket/search-params";
 
 type HomePageProps = {
-  searchParams:SearchParams;
+  searchParams:Promise<SearchParams>;
 };
 
 const HomePage = async ({ searchParams }: HomePageProps) => {
-  const searchParamsResult = await searchParamsCache.parse(searchParams)
   return (
     <div className="flex-1 flex flex-col gap-y-8">
       <Heading
@@ -18,7 +17,7 @@ const HomePage = async ({ searchParams }: HomePageProps) => {
         description="Tickets by everyone at one place"
       />
       <Suspense fallback={<Spinner />}>
-        <TicketList searchParams={searchParamsResult} />
+        <TicketList searchParams={searchParamsCache.parse(await searchParams)} />
       </Suspense>
     </div>
   );
