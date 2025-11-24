@@ -39,19 +39,56 @@ const tickets = [
   },
 ];
 
+const comments = [
+  {
+    content: "NEW COMMENT 1",
+  },
+  {
+    content: "NEW COMMENT 2",
+  },
+  {
+    content: "NEW COMMENT 3",
+  },
+  {
+    content: "NEW COMMENT 4",
+  },
+  {
+    content: "NEW COMMENT 5",
+  },
+  {
+    content: "NEW COMMENT 6",
+  },
+];
+
+const getRandomNumber = (maxNumber: number):number => {
+  return Math.floor(Math.random() * (maxNumber + 1))
+
+};
+
 const seed = async () => {
   const t0 = performance.now();
   console.log("DB Seed: Started...");
   await prisma.user.deleteMany();
   await prisma.ticket.deleteMany();
+  await prisma.comment.deleteMany();
   const passwordHash = await hash("tierrapura");
+
   const dbUsers = await prisma.user.createManyAndReturn({
     data: users.map((user) => ({ ...user, passwordHash })),
-  });
-  await prisma.ticket.createMany({
+  })
+
+  const dbTickets = await prisma.ticket.createManyAndReturn({
     data: tickets.map((ticket) => ({
       ...ticket,
-      userId: dbUsers[0].id,
+      userId: dbUsers[getRandomNumber(dbUsers.length - 1)].id,
+    })),
+  });
+
+  await prisma.comment.createMany({
+    data: comments.map((comment) => ({
+      ...comment,
+      userId: dbUsers[getRandomNumber(dbUsers.length - 1)].id,
+      ticketId: dbTickets[getRandomNumber(dbTickets.length - 1)].id,
     })),
   });
   const t1 = performance.now();

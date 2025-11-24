@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ticketsPath } from "@/app/paths";
 import { Separator } from "@/components/ui/separator";
+import { CardCompact } from "@/components/card-compact";
+import { CommentUpsertForm } from "@/features/comment/components/coment-upsert-form";
+import { CommentList } from "@/features/comment/components/comment-list";
 
 type TicketPageProps = {
   params: Promise<{
@@ -30,6 +33,17 @@ const TicketPage = async ({ params }: TicketPageProps) => {
       <Separator/>
       <div className="flex justify-center animate-fade-in-from-top">
         <TicketItem ticket={ticket} isDetail />
+      </div>
+      <div className="flex justify-center">
+        <CardCompact
+          classname="w-full max-w-[580px] self-center"
+          title="New Comment"
+          description="A new comment will be created"
+          content={<CommentUpsertForm ticketId={ticket.id}/>}
+        />
+      </div>
+      <div className="flex justify-center">
+        <CommentList ticketId={ticket.id}/>
       </div>
     </div>
   );

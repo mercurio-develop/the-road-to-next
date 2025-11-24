@@ -14,8 +14,7 @@ type CardCompactProps = {
   content: React.ReactNode;
   footer?: React.ReactNode;
 };
-const CardCompact = ({
-                       classname,
+const CardCompact = ({ classname,
   title,
   description,
   content,
