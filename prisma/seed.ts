@@ -4,8 +4,8 @@ import { hash } from "@node-rs/argon2";
 const prisma = new PrismaClient();
 
 const users = [
-  { username: "admin", email: "admin@gmail.com" },
-  { username: "orqodev", email: "orqodev@gmail.com" },
+  { username: "admin", email: "admin@gmail.com", firstName:"Alejandro", lastName:"Fidanza" },
+  { username: "orqodev", email: "orqodev@gmail.com",firstName:"Alejandro", lastName:"Fidanza"},
 ];
 
 const tickets = [

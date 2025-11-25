@@ -6,10 +6,8 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { commentEditPath} from "@/app/paths";
-import {
-  LucidePencil,
-} from "lucide-react";
+import { commentEditPath } from "@/app/paths";
+import { LucidePencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Prisma } from ".prisma/client";
 import { getAuth } from "@/features/auth/queries/get-auth";
@@ -20,7 +18,9 @@ import { CommentDeleteButton } from "@/features/comment/components/comment-delet
 
 type CommentItemProps = {
   comment: Prisma.CommentGetPayload<{
-    include: { user: { select: { username: true } } };
+    include: {
+      user: { select: { username: true; firstName: true; lastName: true } };
+    };
   }>;
 };
 
@@ -30,7 +30,7 @@ const CommentItem = async ({ comment }: CommentItemProps) => {
 
   const editButton = isCommentOwner && (
     <Button asChild variant="outline" size="icon">
-      <Link prefetch href={commentEditPath(comment.id,comment.ticketId)}>
+      <Link prefetch href={commentEditPath(comment.id, comment.ticketId)}>
         <LucidePencil />
       </Link>
     </Button>
@@ -39,27 +39,32 @@ const CommentItem = async ({ comment }: CommentItemProps) => {
   console.log(comment);
   return (
     <div className={"w-full flex gap-x-1  max-w-[580px]"}>
-      <Card key={comment.id} className="w-full gap-y-2 bg-input overflow-hidden">
+      <Card
+        key={comment.id}
+        className="w-full gap-y-2 bg-input overflow-hidden"
+      >
         <CardHeader>
-          <CardTitle className="flex gap-x-1">
+          <CardTitle className="flex gap-x-1 items-center">
             <Avatar>
               <AvatarFallback>
                 {comment.user?.username[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <span className="ml-1 text-lg">{comment.user?.username}</span>
+            <span className="ml-1 a">
+              {comment.user?.firstName} {comment.user?.lastName}
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="ml-2">
-          <p className="bg-transparent ">{comment.content}</p>
+          <p className="bg-transparent text-sm">{comment.content}</p>
         </CardContent>
         <CardFooter>
           <p className="text-sm text-muted-foreground ml-auto">
-            Created - {format(comment.createdAt, "yyyy-MM-dd")}
+            {comment.createdAt.toLocaleString()}
           </p>
         </CardFooter>
       </Card>
-      <div className="flex flex-col gap-y-1">
+      <div className="flex flex-col gap-y-1 ml-1">
         {editButton}
         {isCommentOwner && (
           <CommentDeleteButton
