@@ -69,7 +69,7 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
         "max-w-[420px]": !isDetail,
       })}
     >
-      <div className="flex gap-x-2">
+      <div className={clsx("flex gap-x-0",{"gap-x-2":!isDetail || (isTicketOwner && isDetail)})}>
         <Card key={ticket.id} className="w-full overflow-hidden">
           <CardHeader>
             <CardTitle className="flex gap-x-2">
@@ -112,7 +112,7 @@ const TicketItem = async ({ ticket, isDetail }: TicketItemProps) => {
       {isDetail && <>
         <div className="flex justify-start">
           <CardCompact
-            classname="w-full max-w-[535px]"
+            classname={"w-full max-w-[580px]"}
             title="New Comment"
             description="A new comment will be created"
             content={<CommentUpsertForm ticketId={ticket.id} />}
