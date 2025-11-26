@@ -15,9 +15,9 @@ const Form = ({action,actionState, children,onError,onSuccess}: FormProps) => {
   useActionFeedback(actionState, {
     onSuccess: ({ actionState }) => {
       if (actionState.message) {
-        onSuccess?.(actionState)
         toast.success(actionState.message);
       }
+      onSuccess?.(actionState)
     },
     onError: ({ actionState }) => {
       if (actionState.message) {

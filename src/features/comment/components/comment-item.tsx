@@ -7,7 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { LucidePencil, LucideTrash, LucideX } from "lucide-react";
+import {
+  LucideLoaderCircle,
+  LucidePencil,
+  LucideTrash,
+  LucideX,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
@@ -21,10 +26,7 @@ import { ActionState } from "@/components/form/utils/to-action-state";
 type CommentItemProps = {
   comment: CommentWithMetadata;
   handleDeleteComment: (id: string) => void;
-  handleUpsertComment: (
-    actionState: ActionState,
-    isEdit?: boolean,
-  ) => void;
+  handleUpsertComment: (actionState: ActionState, isEdit?: boolean) => void;
 };
 
 const CommentItem = ({
@@ -39,20 +41,24 @@ const CommentItem = ({
   };
 
   const editButton = (
-    <Button asChild variant="outline" size="icon" onClick={handleSetEdit}>
+    <Button variant="outline" size="icon" onClick={handleSetEdit}>
       {!isEdit ? (
-        <LucidePencil className="w-9 h-9 p-2" />
+        <LucidePencil className="w-4 h-4" />
       ) : (
-        <LucideX className="w-9 h-9 p-2" />
+        <LucideX className="w-4 h-4" />
       )}
     </Button>
   );
 
   const [deleteButton, deleteDialog] = UseConfirmDialog({
     action: deleteComment.bind(null, comment.id, comment.ticketId),
-    trigger: (
-      <Button asChild variant="outline" size="icon">
-        <LucideTrash className="w-9 h-9 p-2" />
+    trigger: (isPending) => (
+      <Button variant="outline" size="icon" disabled={isPending}>
+        {isPending ? (
+          <LucideLoaderCircle className="w-4 h-4 animate-spin" />
+        ) : (
+          <LucideTrash className="w-4 h-4" />
+        )}
       </Button>
     ),
     onSuccess: () => {
@@ -60,9 +66,7 @@ const CommentItem = ({
     },
   });
 
-  const handleOnSuccess = (
-    actionState: ActionState,
-  ) => {
+  const handleOnSuccess = (actionState: ActionState) => {
     handleUpsertComment(actionState, isEdit);
     setEdit(false);
   };
