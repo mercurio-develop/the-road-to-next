@@ -6,23 +6,27 @@ import { FieldError } from "@/components/form/field-error";
 import { SubmitButton } from "@/components/form/submit-button";
 import { Form } from "@/components/form/form";
 import { useActionState } from "react";
-import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
+import {
+  ActionState,
+  EMPTY_ACTION_STATE,
+} from "@/components/form/utils/to-action-state";
 import { upsertComment } from "@/features/comment/actions/upsert-comment";
 import { CommentWithMetadata } from "@/features/comment/types";
 
 type CommentUpsertProps = {
   comment?: CommentWithMetadata;
   ticketId: string;
+  onSuccess:(actionState:ActionState)=>void
 };
 
-const CommentUpsertForm = ({ comment, ticketId }: CommentUpsertProps) => {
+const CommentUpsertForm = ({ comment, ticketId,onSuccess }: CommentUpsertProps) => {
   const [actionState, action] = useActionState(
     upsertComment.bind(null, comment?.id),
     EMPTY_ACTION_STATE,
   );
 
   return (
-    <Form action={action} actionState={actionState}>
+    <Form action={action} actionState={actionState} onSuccess={onSuccess}>
       <Label htmlFor="content">Content</Label>
       <Textarea
         id="content"

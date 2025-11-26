@@ -16,12 +16,15 @@ import { CommentUpsertForm } from "@/features/comment/components/coment-upsert-f
 import { UseConfirmDialog } from "@/components/confirm-dialog";
 import { deleteComment } from "@/features/comment/actions/delete-comment";
 import { CommentWithMetadata } from "@/features/comment/types";
+import { ActionState } from "@/components/form/utils/to-action-state";
 
 type CommentItemProps = {
-  comment: CommentWithMetadata
+  comment: CommentWithMetadata;
+  handleDeleteComment:(id:string)=>void;
+  handleUpsertComment:(actionState:ActionState,isEdit?:boolean)=>void;
 };
 
-const CommentItem = ({ comment }: CommentItemProps) => {
+const CommentItem = ({ comment,handleDeleteComment,handleUpsertComment}: CommentItemProps) => {
   const [isEdit, setEdit] = useState(false);
 
   const handleSetEdit = () => {
@@ -45,7 +48,15 @@ const CommentItem = ({ comment }: CommentItemProps) => {
         <LucideTrash className="w-9 h-9 p-2" />
       </Button>
     ),
+    onSuccess:()=>{
+      handleDeleteComment(comment.id)
+    }
   });
+
+  const handleOnSuccess = (actionState: ActionState)=>{
+    handleUpsertComment(actionState,isEdit)
+    setEdit(false)
+  }
 
   return (
     <div className={"w-full flex gap-x-1  max-w-[580px]"}>
@@ -55,7 +66,7 @@ const CommentItem = ({ comment }: CommentItemProps) => {
           description="Edit an existing comment"
           classname="w-full max-w-[535px] animate-fade-from-top"
           content={
-            <CommentUpsertForm comment={comment} ticketId={comment.ticketId} />
+            <CommentUpsertForm comment={comment} ticketId={comment.ticketId} onSuccess={handleOnSuccess}/>
           }
         />
       ) : (

@@ -5,3 +5,8 @@ export type CommentWithMetadata = Prisma.CommentGetPayload<{
     user: { select: { username: true; firstName: true; lastName: true } };
   };
 }> & { isOwner: boolean };
+
+export type CommentsWithMetadata = {
+  list: CommentWithMetadata[];
+  metadata: { count: number; hasNextPage: boolean };
+};

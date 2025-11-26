@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import {
   ActionState,
@@ -6,13 +6,12 @@ import {
   toActionState,
 } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
-import { signInPath, ticketPath} from "@/app/paths";
+import { signInPath, ticketPath } from "@/app/paths";
 import { prisma } from "@/lib/prisma";
 import { isOwner } from "@/features/auth/utils/is-owner";
 import { z } from "zod";
 import { getTicket } from "@/features/ticket/queries/get-ticket";
 import { revalidatePath } from "next/cache";
-
 
 const upsertComentSchema = z.object({
   content: z.string().min(1).max(1024),
@@ -27,9 +26,8 @@ export const upsertComment = async (
 
   const ticketId = formData.get("ticketId")?.toString();
 
-
   const ticket = ticketId && (await getTicket(ticketId));
-
+  let comment = null;
   try {
     if (id) {
       const comment = await prisma.comment.findUnique({
@@ -49,9 +47,11 @@ export const upsertComment = async (
         userId: user.id,
         ticketId: ticket.id,
       };
-
-      await prisma.comment.upsert({
+      comment = await prisma.comment.upsert({
         where: { id: id || "" },
+        include: {
+          user: { select: { username: true, firstName: true, lastName: true } },
+        },
         update: dbData,
         create: dbData,
       });
@@ -59,9 +59,14 @@ export const upsertComment = async (
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }
+
+  if(comment){
+    comment = {...comment,isOwner:isOwner(user,comment)}
+  }
+
   if (ticketId) revalidatePath(ticketPath(ticketId));
   if (id) {
-    return toActionState("SUCCESS", "Comment Updated");
+    return toActionState("SUCCESS", "Comment Updated",undefined, comment);
   }
-  return toActionState("SUCCESS", "Comment Created");
+  return toActionState("SUCCESS", "Comment Created", undefined, comment);
 };
