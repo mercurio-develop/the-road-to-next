@@ -7,8 +7,6 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { User } from ".prisma/client";
-import { generatePasswordResetLink } from "@/features/password/utils/generate-password-reset-link";
 import { hashPassword } from "@/features/password/utils/hast-and-verify";
 import { signInPath } from "@/paths";
 import { redirect } from "next/navigation";
