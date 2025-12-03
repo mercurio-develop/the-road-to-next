@@ -5,17 +5,13 @@ import { useActionState, useState } from "react";
 import { EMPTY_ACTION_STATE } from "@/components/form/utils/to-action-state";
 import { Form } from "@/components/form/form";
 import { FieldError } from "@/components/form/field-error";
-import { passwordReset } from "@/features/password/actions/password-reset";
 import { Button } from "@/components/ui/button";
 import zxcvbn from "zxcvbn";
+import { passwordChange } from "@/features/password/actions/password-change";
 
-type PasswordResetFormProps = {
-  tokenId: string;
-};
-
-const PasswordResetForm = ({ tokenId }: PasswordResetFormProps) => {
+const PasswordChangeForm = ( ) => {
   const [actionState, action] = useActionState(
-    passwordReset.bind(null, tokenId),
+    passwordChange,
     EMPTY_ACTION_STATE,
   );
 
@@ -58,6 +54,14 @@ const PasswordResetForm = ({ tokenId }: PasswordResetFormProps) => {
         onChange={onChangePassword}
         defaultValue={actionState.payload?.get("password") as string}
       />
+      <FieldError name="password" actionState={actionState} />
+      <Input
+        name="newPassword"
+        placeholder="New Password"
+        type="password"
+        onChange={onChangePassword}
+        defaultValue={actionState.payload?.get("newPassword") as string}
+      />
       <div className=" flex h-2 w-[98%] rounded-full bg-muted ml-1 ">
         <div
           className={`h-full rounded-full ${bg} transition-[width,background-color] duration-500 ease-out`}
@@ -67,17 +71,16 @@ const PasswordResetForm = ({ tokenId }: PasswordResetFormProps) => {
       <div className={`text-xs flex ${text} ml-auto pr-2`}>
         {["very weak", "weak", "fair", "good", "strong"][strongPassword.score]}
       </div>
-      <FieldError name="password" actionState={actionState} />
+      <FieldError name="newPassword" actionState={actionState} />
       <Input
         type="password"
-        name="confirmPassword"
-        placeholder="Confirm Password"
-        defaultValue={actionState.payload?.get("confirmPassword") as string}
+        name="confirmNewPassword"
+        placeholder="Confirm New Password"
+        defaultValue={actionState.payload?.get("confirmNewPassword") as string}
       />
-      <FieldError name="confirmPassword" actionState={actionState} />
-
-      <Button disabled={strongPassword.score === 0}>Reset Password </Button>
+      <FieldError name="confirmNewPassword" actionState={actionState} />
+      <Button disabled={strongPassword.score === 0}>Update Password </Button>
     </Form>
   );
 };
-export { PasswordResetForm };
+export { PasswordChangeForm };

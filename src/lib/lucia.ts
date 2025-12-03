@@ -1,5 +1,6 @@
-import { hashToken } from "@/utils/crypto";
+import { generateRandomToken, hashToken } from "@/utils/crypto";
 import { prisma } from "./prisma";
+import { setSessionCookie } from "@/features/auth/utils/session-cookie";
 
 const SESSION_REFRESH_INTERVAL_MS = 1000 * 60 * 60 * 24 * 15; // 15 days
 const SESSION_MAX_DURATION_MS = SESSION_REFRESH_INTERVAL_MS * 2; // 30 days
@@ -75,3 +76,10 @@ export const invalidateSession = async (sessionId: string) => {
     },
   });
 };
+
+export const createNewSession= async (userId:string)=>{
+  const sessionToken = generateRandomToken();
+  const session = await createSession(sessionToken, userId);
+
+  await setSessionCookie(sessionToken, session.expiresAt);
+}

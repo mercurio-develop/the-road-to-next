@@ -10,9 +10,7 @@ import { ticketsPath } from "@/paths";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { User } from ".prisma/client";
-import { createSession } from "@/lib/lucia";
-import { generateRandomToken } from "@/utils/crypto";
-import { setSessionCookie } from "../utils/session-cookie";
+import { createNewSession } from "@/lib/lucia";
 import { verifyPasswordHash } from "@/features/password/utils/hast-and-verify";
 
 const signInSchema = z.object({
@@ -41,10 +39,7 @@ export const signIn = async (_actionState: ActionState, formData: FormData) => {
       return toActionState("ERROR", "Incorrect email or password", formData);
     }
 
-    const sessionToken = generateRandomToken();
-    const session = await createSession(sessionToken, user.id);
-
-    await setSessionCookie(sessionToken, session.expiresAt);
+    await createNewSession(user.id)
 
   } catch (error) {
     return fromErrorToActionState(error, formData);

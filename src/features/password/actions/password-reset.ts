@@ -8,10 +8,11 @@ import {
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/features/password/utils/hast-and-verify";
-import { signInPath } from "@/paths";
+import { ticketsPath } from "@/paths";
 import { redirect } from "next/navigation";
 import { setCookieByKey } from "@/actions/cookies";
 import { hashToken } from "@/utils/crypto";
+import { createNewSession } from "@/lib/lucia";
 
 const passwordResetSchema = z
   .object({
@@ -73,7 +74,7 @@ export const passwordReset = async (
 
     const passwordHash = await hashPassword(password);
 
-    await prisma.user.update({
+    const user = await prisma.user.update({
       where: {
         id: passwordResetToken.userId,
       },
@@ -81,11 +82,16 @@ export const passwordReset = async (
         passwordHash,
       },
     });
+
+    await createNewSession(user.id);
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }
 
-  await setCookieByKey("toast", "Successfully reset password!");
+  await setCookieByKey(
+    "toast",
+    "Your password has been reset and you’re now signed in.",
+  );
 
-  redirect(signInPath());
+  redirect(ticketsPath());
 };

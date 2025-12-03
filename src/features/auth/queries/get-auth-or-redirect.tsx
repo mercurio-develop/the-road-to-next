@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export const getAuthOrRedirect = async (path:string)=> {
   const auth = await getAuth();
 
-  if (!auth) {
+  if (!auth.user) {
     redirect(path);
   }
   return auth
