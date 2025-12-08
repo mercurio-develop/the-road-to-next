@@ -7,13 +7,13 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { prisma } from "@/lib/prisma";
 import { setCookieByKey } from "@/actions/cookies";
-import { signInPath, ticketsPath } from "@/paths";
+import { ticketsPath } from "@/paths";
 import { redirect } from "next/navigation";
 import { generateRandomToken } from "@/utils/crypto";
 import { setSessionCookie } from "../utils/session-cookie";
 import { createSession } from "@/lib/lucia";
 import { hashPassword } from "@/features/password/utils/hash-and-verify";
-import { sendEmailWelcome } from "@/features/auth/emails/send-email-welcome";
+import { inngest } from "@/lib/inngest";
 
 const signUpSchema = z
   .object({
@@ -43,7 +43,8 @@ const signUpSchema = z
 
 export const signUp = async (_actionState: ActionState, formData: FormData) => {
   try {
-    const { username, email, password, firstName, lastName } = signUpSchema.parse(Object.fromEntries(formData));
+    const { username, email, password, firstName, lastName } =
+      signUpSchema.parse(Object.fromEntries(formData));
 
     const passwordHash = await hashPassword(password);
     const user = await prisma.user.create({
@@ -61,14 +62,13 @@ export const signUp = async (_actionState: ActionState, formData: FormData) => {
 
     await setSessionCookie(sessionToken, session.expiresAt);
 
-    const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || "http://localhost:3000";
-    const loginUrl = `${appBaseUrl}${signInPath()}`;
-    const toName = `${firstName} ${lastName}`.trim();
-    await sendEmailWelcome(toName, email, loginUrl);
-
+    await inngest.send({
+      name: "app/signup.signup-welcome",
+      data: { user: {firstName,lastName,email} },
+    });
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }
   await setCookieByKey("toast", "Sign up successful");
-  redirect(ticketsPath())
+  redirect(ticketsPath());
 };
