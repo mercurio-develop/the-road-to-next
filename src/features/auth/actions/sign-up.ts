@@ -16,7 +16,6 @@ import { createSession } from "@/lib/lucia";
 import { hashPassword } from "@/features/password/utils/hash-and-verify";
 import { inngest } from "@/lib/inngest";
 import { Prisma } from ".prisma/client";
-import { generateEmailVerificationCode } from "@/features/auth/utils/generate-email-verification-code";
 
 const signUpSchema = z
   .object({
@@ -60,27 +59,15 @@ export const signUp = async (_actionState: ActionState, formData: FormData) => {
       },
     });
 
-    const verificationCode = await generateEmailVerificationCode(
-      user.id,
-      user.email,
-    );
-
     const sessionToken = generateRandomToken();
     const session = await createSession(sessionToken, user.id);
 
     await setSessionCookie(sessionToken, session.expiresAt);
 
     await inngest.send({
-      name: "app/signup.email-verification",
+      name: "app/auth.signup",
       data: {
-        code: verificationCode,
-        user: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          userId: user.id,
-          username: user.username,
-        },
+        userId: user.id,
       },
     });
   } catch (error) {

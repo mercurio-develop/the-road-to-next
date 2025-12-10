@@ -13,7 +13,7 @@ type EmailVerifyAccountProps = {
   code: string;
 };
 
-const EmailVerifyAccount = ({ toName, code }: EmailVerifyAccountProps) => {
+const EmailVerification = ({ toName, code }: EmailVerifyAccountProps) => {
   return (
     <Html>
       <Head />
@@ -27,11 +27,9 @@ const EmailVerifyAccount = ({ toName, code }: EmailVerifyAccountProps) => {
                 secure, we need to verify your email address. Use the code below
                 to complete your verification.
               </Text>
-
               <div className="mt-6 inline-block rounded-md bg-gray-900 text-white px-6 py-4 font-mono text-3xl tracking-[.3em]">
                 {code}
               </div>
-
               <Text className="mt-6 text-sm text-gray-600">
                 For your security, never share this code with anyone.
               </Text>
@@ -46,9 +44,9 @@ const EmailVerifyAccount = ({ toName, code }: EmailVerifyAccountProps) => {
   );
 };
 
-EmailVerifyAccount.PreviewProps = {
+EmailVerification.PreviewProps = {
   toName: "Jane Doe",
   code: "348219",
 };
 
-export default EmailVerifyAccount;
+export default EmailVerification;

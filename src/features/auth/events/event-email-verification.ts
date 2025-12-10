@@ -1,30 +1,33 @@
 import { inngest } from "@/lib/inngest";
 import { sendEmailWelcome } from "@/features/auth/emails/send-email-welcome";
 import { signInPath } from "@/paths";
-import { sendEmailVerifyAccount } from "@/features/auth/emails/send-email-verify-account";
+import { sendEmailVerification } from "@/features/auth/emails/send-email-verification";
+import { generateEmailVerificationCode } from "@/features/auth/utils/generate-email-verification-code";
+import { prisma } from "@/lib/prisma";
 
 export type EmailVerificationFunctionArgs = {
   data: {
-    code: string;
-    user: {
-      firstName: string;
-      lastName: string;
-      username: string;
-      email: string;
-      userId: string;
-    };
+    userId: string;
   };
 };
 
 export const emailVerificationFunction = inngest.createFunction(
-  { id: "signup-email-verification" },
-  { event: "app/signup.email-verification" },
+  { id: "email-verification" },
+  { event: "app/auth.signup" },
   async ({ event, step }) => {
-    await step.run("send-email-verify-account", async () => {
-      const { email, username } = event.data.user;
-      const { code } = event.data;
+    const { userId } = event.data;
 
-      const result = await sendEmailVerifyAccount(username, email, code);
+    const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const { firstName, lastName, email, id, username } = user;
+
+    await step.run("send-email-verify-account", async () => {
+      const verificationCode = await generateEmailVerificationCode(id, email);
+
+      const result = await sendEmailVerification(
+        username,
+        email,
+        verificationCode,
+      );
       if (result.error) {
         throw new Error(`${result.error.name}:${result.error.message}`);
       }
@@ -32,8 +35,6 @@ export const emailVerificationFunction = inngest.createFunction(
     });
 
     await step.run("send-signup-welcome", async () => {
-      const { firstName, lastName, email } = event.data.user;
-
       const appBaseUrl =
         process.env.NEXT_PUBLIC_APP_URL ||
         process.env.APP_URL ||
