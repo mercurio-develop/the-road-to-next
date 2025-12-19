@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { getAuth } from "@/features/auth/queries/get-auth";
-import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 
 export const getUser = async () => {
   const { user } = await getAuth();
