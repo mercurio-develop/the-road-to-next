@@ -10,6 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { setCookieByKey } from "@/actions/cookies";
 import { Prisma } from ".prisma/client";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
+import { createNewSession } from "@/lib/lucia";
 
 // Schema for updating profile
 const updateProfileSchema = z.object({
@@ -19,10 +20,7 @@ const updateProfileSchema = z.object({
     .string()
     .min(1)
     .max(191)
-    .refine(
-      (value) => !value.includes(" "),
-      "Username cannot contain spaces",
-    ),
+    .refine((value) => !value.includes(" "), "Username cannot contain spaces"),
   email: z.email().min(1, { message: "Is Required" }).max(191),
 });
 
@@ -68,18 +66,24 @@ export const updateProfile = async (
       });
     }
 
-    // Update profile
-    await prisma.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        firstName,
-        lastName,
-        username,
-        email,
-      },
-    });
+    await prisma.$transaction([
+      prisma.session.deleteMany({
+        where: { userId: user.id },
+      }),
+      prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          firstName,
+          lastName,
+          username,
+          email,
+        },
+      }),
+    ]);
+
+    await createNewSession(user.id);
 
     await setCookieByKey("toast", "Profile updated successfully");
 
