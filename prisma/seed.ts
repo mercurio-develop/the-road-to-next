@@ -79,13 +79,30 @@ const getRandomNumber = (maxNumber: number): number => {
 const seed = async () => {
   const t0 = performance.now();
   console.log("DB Seed: Started...");
-  await prisma.user.deleteMany();
   await prisma.ticket.deleteMany();
   await prisma.comment.deleteMany();
+  await prisma.membership.deleteMany();
+  await prisma.organization.deleteMany();
+  await prisma.user.deleteMany();
+
+  const dbOrganization = await prisma.organization.create({
+    data: {
+      name: "Organization 1",
+    },
+  });
+
   const passwordHash = await hash("tierrapura");
 
   const dbUsers = await prisma.user.createManyAndReturn({
     data: users.map((user) => ({ ...user, passwordHash })),
+  });
+
+  await prisma.membership.createMany({
+    data: {
+      userId: dbUsers[1].id,
+      organizationId: dbOrganization.id,
+      isActive: true,
+    },
   });
 
   const dbTickets = await prisma.ticket.createManyAndReturn({

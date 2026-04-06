@@ -37,7 +37,7 @@ const EmailVerificationForm = () => {
           </InputOTPGroup>
         </InputOTP>
       </div>
-      <SubmitButton label="Sign In" />
+      <SubmitButton label="Verify Email" />
     </Form>
   );
 };

@@ -18,7 +18,10 @@ export const sendEmailVerificationCode = async (
   formData: FormData,
 ): Promise<ActionState> => {
   try {
-    const { user } = await getAuthOrRedirect({ checkEmailVerified: false });
+    const { user } = await getAuthOrRedirect({
+      checkEmailVerified: false,
+      checkOrganization: false,
+    });
 
     const { email } = sendProfileEmailVerificationSchema.parse(
       Object.fromEntries(formData),

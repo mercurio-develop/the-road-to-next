@@ -28,7 +28,10 @@ export const updateProfile = async (
   _prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> => {
-  const { user } = await getAuthOrRedirect({ checkEmailVerified: false });
+  const { user } = await getAuthOrRedirect({
+    checkEmailVerified: false,
+    checkOrganization: false,
+  });
 
   try {
     const { username, email, firstName, lastName } =

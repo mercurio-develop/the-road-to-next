@@ -14,84 +14,107 @@ datasource db {
   directUrl = env("DATABASE_URL") // your current version
 }
 
+model Organization {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  name        String
+  memberships Membership[]
+}
+
+model Membership {
+  organization   Organization @relation(fields: [organizationId], references: [id],onDelete: Cascade)
+  organizationId String
+  userId         String
+  User           User         @relation(fields: [userId], references: [id])
+
+  joinedAt       DateTime     @default(now())
+  isActive       Boolean      @default(false)
+
+  @@id([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+}
+
 model User {
-  id            String    @id @default(cuid())
-  username      String    @unique
-  email         String    @unique
-  emailVerified Boolean              @default(false)
+  id                     String                   @id @default(cuid())
+  username               String                   @unique
+  email                  String                   @unique
+  emailVerified          Boolean                  @default(false)
   emailVerificationToken EmailVerificationToken[]
-  firstName     String
-  lastName      String
-  passwordHash  String
-  sessions      Session[]
-  passwordResetToken PasswordResetToken[]
-  tickets       Ticket[]
-  comments      Comment[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  firstName              String
+  lastName               String
+  passwordHash           String
+  sessions               Session[]
+  passwordResetToken     PasswordResetToken[]
+  tickets                Ticket[]
+  comments               Comment[]
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  memberships            Membership[]
 }
 
 model PasswordResetToken {
-  tokenHash String @id
+  tokenHash String   @id
   expiresAt DateTime
-  userId String
-  user   User      @relation(fields:[userId],references:[id],onDelete:Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model EmailVerificationToken {
-  id        String   @id @default(cuid())
-  code      String
-  expiresAt DateTime
-  email     String
+  id         String    @id @default(cuid())
+  code       String
+  expiresAt  DateTime
+  email      String
   verifiedAt DateTime?
-  userId    String
-  user      User      @relation(fields:[userId],references:[id],onDelete:Cascade)
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
-model Session{
-  id  String  @id
-  expiresAt   DateTime
-  userId      String
-  user        User    @relation(fields:[userId], references:[id], onDelete: Cascade)
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model Ticket {
-  id        String          @id @default(cuid())
+  id        String       @id @default(cuid())
   title     String
-  content   String          @db.VarChar(1024)
-  status    TicketStatus    @default(OPEN)
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  content   String       @db.VarChar(1024)
+  status    TicketStatus @default(OPEN)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   deadline  String
   bounty    Int
   userId    String
-  user      User          @relation(fields:[userId],references:[id], onDelete:Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments  Comment[]
 
   @@index([userId])
 }
 
-enum TicketStatus{
- OPEN
- IN_PROGRESS
- DONE
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
 }
 
 model Comment {
-  id          String      @id @default(cuid())
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  content     String
-  ticket      Ticket      @relation(fields:[ticketId], references:[id], onDelete:Cascade)
-  ticketId    String
-  userId      String?
-  user        User?        @relation(fields:[userId],references:[id],onDelete:SetNull)
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  content   String
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId  String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([ticketId])
   @@index([userId])

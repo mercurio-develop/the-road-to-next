@@ -20,17 +20,16 @@ export const verifyEmailCode = async (
   formData: FormData,
 ): Promise<ActionState> => {
   try {
-    const { user } = await getAuthOrRedirect({ checkEmailVerified: false });
+    const { user } = await getAuthOrRedirect({
+      checkEmailVerified: false,
+      checkOrganization: false,
+    });
 
     const { email, code } = await verifyEmailCodeSchema.parseAsync(
       Object.fromEntries(formData),
     );
 
-    const validCode = await validateEmailVerificationCode(
-      user.id,
-      email,
-      code,
-    );
+    const validCode = await validateEmailVerificationCode(user.id, email, code);
 
     if (!validCode) {
       return toActionState(

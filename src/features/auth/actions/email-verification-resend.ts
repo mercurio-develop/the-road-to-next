@@ -13,6 +13,7 @@ import { sendEmailVerification } from "@/features/auth/emails/send-email-verific
 export const emailVerificationResend = async () => {
   const { user } = await getAuthOrRedirect({
     checkEmailVerified: false,
+    checkOrganization:false,
   });
 
   try {
