@@ -8,6 +8,7 @@ import { SideBar } from "@/app/_navigation/sidebar/components/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ReactQueryProvider } from "@/app/_providers/react-query/react-query-provider";
+import { ActiveOrganizationBar } from "@/features/organization/components/active-organization-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,7 +41,7 @@ export default function RootLayout({
           <main
             className="
                 flex-1
-                py-24 px-8
+                pt-24 pb-16 px-8
                 bg-secondary/20
                 flex flex-col
                 items-center
@@ -53,6 +54,7 @@ export default function RootLayout({
               </SidebarProvider>
             </NuqsAdapter>
           </main>
+          <ActiveOrganizationBar />
           <Toaster expand />
           </ReactQueryProvider>
         </ThemeProvider>

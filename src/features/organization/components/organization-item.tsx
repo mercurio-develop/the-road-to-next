@@ -9,6 +9,7 @@ import {
   LucideBuilding2,
   LucideCalendar,
   LucideHash,
+  LucideLoaderCircle,
   LucidePencil,
   LucideSquareArrowOutUpRight,
   LucideTrash,
@@ -28,9 +29,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 type OrganizationItemProps = {
   hasActive?: boolean;
+  limitedAccess?: boolean;
   variant?: "row" | "card";
   organization: {
     _count: { memberships: number };
@@ -45,9 +48,10 @@ const OrganizationItem = ({
   hasActive,
   variant = "row",
   organization,
+  limitedAccess,
 }: OrganizationItemProps) => {
   const isActive = organization?.membershipByUser?.isActive;
-
+  const router = useRouter();
   const switchButton = (
     <OrganizationSwitchButton
       organizationId={organization.id}
@@ -63,11 +67,18 @@ const OrganizationItem = ({
 
   const [deleteButton, deleteDialog] = UseConfirmDialog({
     action: deleteOrganization.bind(null, organization?.id),
-    trigger: (
+    trigger: (isPending) => (
       <Button variant="destructive">
-        <LucideTrash className="h-4 w-4" />
+        {isPending ? (
+          <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+        ) : (
+          <LucideTrash className="h-4 w-4" />
+        )}
       </Button>
     ),
+    onSuccess: () => {
+      router.refresh();
+    },
     description: `This action cannot be undone. Make sure you understand the consequences of delete the company ${organization.name}.`,
   });
 
@@ -128,7 +139,10 @@ const OrganizationItem = ({
                     Joined At
                   </span>
                   <span className="text-sm font-medium">
-                    {format(organization.membershipByUser.joinedAt, "MMM d, yyyy")}
+                    {format(
+                      organization.membershipByUser.joinedAt,
+                      "MMM d, yyyy",
+                    )}
                   </span>
                 </div>
               )}
@@ -137,7 +151,9 @@ const OrganizationItem = ({
                   <LucideHash className="h-3.5 w-3.5" />
                   Status
                 </span>
-                <span className={`text-sm font-semibold ${isActive ? "text-green-600" : "text-muted-foreground"}`}>
+                <span
+                  className={`text-sm font-semibold ${isActive ? "text-green-600" : "text-muted-foreground"}`}
+                >
                   {isActive ? "Active" : "Inactive"}
                 </span>
               </div>
@@ -149,7 +165,9 @@ const OrganizationItem = ({
     );
   }
 
-  const buttons = (
+  const buttons = limitedAccess ? (
+    <>{switchButton}</>
+  ) : (
     <>
       {switchButton} {detailButton} {editButton} {deleteButton}
     </>

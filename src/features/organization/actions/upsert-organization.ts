@@ -9,9 +9,7 @@ import {
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { organizationsPath, ticketsPath } from "@/paths";
-import { setCookieByKey } from "@/actions/cookies";
+import { organizationsPath } from "@/paths";
 
 const upsertOrganizationSchema = z.object({
   id: z.string().optional(),
@@ -80,6 +78,8 @@ export const upsertOrganization = async (
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }
+  revalidatePath(organizationsPath(), "layout");
+
   if (id) {
     return toActionState("SUCCESS", "Organization Updated");
   }

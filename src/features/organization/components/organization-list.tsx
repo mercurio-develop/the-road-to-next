@@ -8,7 +8,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const OrganizationList = async () => {
+type OrganizationListProps = {
+  limitedAccess?: boolean;
+};
+
+const OrganizationList = async ({limitedAccess}:OrganizationListProps) => {
   const organizations = await getOrganizationsByUser();
   const hasActive = organizations.some((organization)=>organization.membershipByUser?.isActive);
   return (
@@ -34,6 +38,7 @@ const OrganizationList = async () => {
                 key={organization.id}
                 hasActive={hasActive}
                 organization={organization}
+                limitedAccess={limitedAccess}
               />
             ))}
           </TableBody>
