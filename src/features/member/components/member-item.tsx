@@ -2,6 +2,7 @@ import { Membership } from "@prisma/client";
 import { format } from "date-fns";
 import { LucideCalendar, LucideMail } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 
 type BasicUser = {
   id: string;
@@ -17,9 +18,10 @@ export type MemberItemProps = {
   member: MembershipWithUser;
 };
 
-const MemberItem = ({ member }: MemberItemProps) => {
+const MemberItem = async ({ member }: MemberItemProps) => {
+  const { user } = await getAuthOrRedirect()
   const initials = `${member.User.firstName[0]}${member.User.lastName[0]}`.toUpperCase();
-  const fullName = `${member.User.firstName} ${member.User.lastName}`;
+  const fullName = `${member.User.firstName} ${member.User.lastName}` + " " + `${user.id === member.User.id ? "(you)" : ""}`;
 
   return (
     <Card className="gap-0 py-0 overflow-hidden">
