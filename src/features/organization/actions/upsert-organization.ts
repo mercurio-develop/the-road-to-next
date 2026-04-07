@@ -24,6 +24,7 @@ export const upsertOrganization = async (
 ): Promise<ActionState> => {
   const { user } = await getAuthOrRedirect({
     checkOrganization: false,
+    checkActiveOrganization:false,
   });
 
   const { id, name } = upsertOrganizationSchema.parse(
@@ -48,17 +49,33 @@ export const upsertOrganization = async (
       });
     } else {
       // Create new organization
-      await prisma.organization.create({
-        data: {
-          name,
-          memberships: {
-            create: {
-              userId: user.id,
-              isActive:false,
+
+      await prisma.$transaction(async (tx)=>{
+        const organization = await tx.organization.create({
+          data: {
+            name,
+            memberships: {
+              create: {
+                userId: user.id,
+                isActive:true,
+              },
             },
           },
-        },
-      });
+        });
+
+        await tx.membership.updateMany({
+          where:{
+            userId:user.id,
+            organizationId:{
+              not:organization.id
+            }
+          },
+          data:{
+            isActive:false
+          }
+        })
+      })
+
     }
   } catch (error) {
     return fromErrorToActionState(error, formData);

@@ -19,29 +19,20 @@ type submitButtonProps = {
   size?: "default" | "sm" | "lg" | "icon";
 };
 
-const SubmitButton = ({ label, icon ,variant,size}: submitButtonProps) => {
+const SubmitButton = ({ label, icon, variant, size }: submitButtonProps) => {
   const { pending } = useFormStatus();
   return (
     <Button disabled={pending} type="submit" variant={variant} size={size}>
-      {pending && (
-        <LucideLoaderCircle
-          className={clsx("h-4 w-4 animate-spin", {
-            "mr-2": !!label,
-          })}
-        />
-      )}
-      {label}
-      {pending ? null : icon ? (
-        <span
-          className={clsx({
-            "ml-1": !!label,
-          })}
-        >
+      {pending ? (
+        <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+      ) : icon ? (
+        <>
           {cloneElement(icon, {
             className: "h-4 w-4",
           })}
-        </span>
+        </>
       ) : null}
+      {label}
     </Button>
   );
 };

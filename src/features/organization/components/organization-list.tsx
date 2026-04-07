@@ -10,7 +10,7 @@ import {
 
 const OrganizationList = async () => {
   const organizations = await getOrganizationsByUser();
-
+  const hasActive = organizations.some((organization)=>organization.membershipByUser?.isActive);
   return (
     <div className="flex flex-col gap-y-4">
       {organizations.length === 0 ? (
@@ -32,6 +32,7 @@ const OrganizationList = async () => {
             {organizations.map((organization) => (
               <OrganizationItem
                 key={organization.id}
+                hasActive={hasActive}
                 organization={organization}
               />
             ))}

@@ -9,7 +9,7 @@ import { FieldError } from "@/components/form/field-error";
 import { upsertOrganization } from "@/features/organization/actions/upsert-organization";
 import { Organization } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { organizationsPath } from "@/paths";
+import { organizationsPath, ticketsPath } from "@/paths";
 
 type OrganizationUpsertFormProps = {
   organization?: Organization;
@@ -24,9 +24,10 @@ const OrganizationUpsertForm = ({
   );
 
   const handleOnSuccess = () => {
-    console.log("CACA")
-
-    redirect(organizationsPath())
+    if(organization){
+      redirect(organizationsPath())
+    }
+    redirect(ticketsPath())
   }
   return (
     <Form

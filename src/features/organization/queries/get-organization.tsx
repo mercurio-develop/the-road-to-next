@@ -5,6 +5,10 @@ import { notFound } from "next/navigation";
 export const getOrganization = async (organizationId: string) => {
   const { user } = await getAuthOrRedirect();
 
+  const hasActive = await prisma.membership.count({
+    where: { userId: user.id, isActive: true },
+  }).then((count) => count > 0);
+
   const organization = await prisma.organization.findUnique({
     where: {
       id: organizationId,
@@ -38,6 +42,12 @@ export const getOrganization = async (organizationId: string) => {
     notFound();
   }
 
-  console.log(organization);
-  return organization;
+  const { memberships, ...rest } = organization;
+
+  return {
+    ...rest,
+    memberships,
+    membershipByUser: memberships.find((m) => m.userId === user.id),
+    hasActive,
+  };
 };
