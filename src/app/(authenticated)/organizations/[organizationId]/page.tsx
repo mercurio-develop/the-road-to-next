@@ -8,7 +8,6 @@ import { Separator } from "@/components/ui/separator";
 import { OrganizationItem } from "@/features/organization/components/organization-item";
 import { Heading } from "@/components/heading";
 import { MembershipList } from "@/features/membership/components/membership-list";
-import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 
 type OrganizationPageProps = {
   params: Promise<{
@@ -28,7 +27,7 @@ const OrganizationPage = async ({ params }:OrganizationPageProps) => {
     <div className="flex-1 flex flex-col gap-y-8 px-6 max-w-5xl mx-auto w-full">
       <Breadcrumbs
         breadcrumbs={[
-          { title: "Organizations", href: organizationsPath()},
+          { title: "Organizations", href: organizationsPath() },
           { title: organization.name },
         ]}
       />
@@ -36,12 +35,19 @@ const OrganizationPage = async ({ params }:OrganizationPageProps) => {
       <div className="flex flex-col gap-10 animate-fade-in-from-top">
         <section className="flex flex-col gap-4">
           <Heading title="Organization Details" />
-          <OrganizationItem organization={organization} hasActive={organization.hasActive} variant="card" />
+          <OrganizationItem
+            organization={organization}
+            hasActive={organization.hasActive}
+            variant="card"
+          />
         </section>
         <Separator />
         <section className="flex flex-col gap-4">
-          <Heading title="Memberships" description="Manage members in your organization " />
-          <MembershipList members={organization.memberships}/>
+          <Heading
+            title="Memberships"
+            description="Manage members in your organization "
+          />
+          <MembershipList members={organization.memberships} />
         </section>
       </div>
     </div>

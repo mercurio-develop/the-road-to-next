@@ -12,7 +12,8 @@ export const deleteMembership = async (
   organizationId: string,
   userId: string,
 ) => {
-  await getAuthOrRedirect();
+  const { user } = await getAuthOrRedirect();
+  const isSelf = user.id === userId;
 
   const memberships = await getMemberships(organizationId);
 
@@ -32,5 +33,5 @@ export const deleteMembership = async (
     return fromErrorToActionState(error);
   }
 
-  return toActionState("SUCCESS", "Membership deleted");
+  return toActionState("SUCCESS", isSelf ? "Left organization" : "Member deleted");
 };

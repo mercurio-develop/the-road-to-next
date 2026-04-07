@@ -26,6 +26,7 @@ import { toast } from "sonner";
 type UseConfirmDialogProps = {
   title?: string;
   description?: string;
+  pendingMessage?: string;
   action: (actionState: ActionState, formData: FormData) => Promise<ActionState>;
   trigger: React.ReactElement | ((isPending: boolean) => React.ReactElement);
   onSuccess?: (actionState: ActionState) => void;
@@ -34,6 +35,7 @@ type UseConfirmDialogProps = {
 const UseConfirmDialog = ({
   action,
   trigger,
+  pendingMessage = "Deleting...",
   title = "Are you absolutely sure?",
   description = "This action cannot be undone.Make sure you understand the consequences.",
   onSuccess,
@@ -48,7 +50,7 @@ const UseConfirmDialog = ({
 
   useEffect(() => {
     if (isPending) {
-      toastRef.current = toast.loading("Deleting...");
+      toastRef.current = toast.loading(pendingMessage);
     } else if (toastRef.current) {
       toast.dismiss(toastRef.current);
     }

@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 
 type OrganizationListProps = {
   limitedAccess?: boolean;

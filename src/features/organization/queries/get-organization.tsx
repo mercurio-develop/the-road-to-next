@@ -44,11 +44,16 @@ export const getOrganization = async (organizationId: string) => {
   }
 
   const { memberships, ...rest } = organization;
+  const membershipByUser = memberships.find((m) => m.userId === user.id);
+
+  if (!membershipByUser) {
+    notFound();
+  }
 
   return {
     ...rest,
     memberships,
-    membershipByUser: memberships.find((m) => m.userId === user.id),
+    membershipByUser,
     hasActive,
   };
 };

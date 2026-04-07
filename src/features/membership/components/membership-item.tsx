@@ -5,17 +5,12 @@ import { format } from "date-fns";
 import {
   LucideCalendar,
   LucideCheckCircle,
-  LucideLoaderCircle,
-  LucideLogOut,
   LucideMail,
   LucideXCircle,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { UseConfirmDialog } from "@/components/confirm-dialog";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import { User } from ".prisma/client";
-import { deleteMembership } from "@/features/membership/actions/delete-membership";
+import { DeleteMembershipButton } from "@/features/membership/components/delete-membership-button";
 
 type BasicUser = {
   id: string;
@@ -33,28 +28,10 @@ export type MemberItemProps = {
   member: MembershipWithUser;
 };
 
-const MembershipItem = ({ member,user}: MemberItemProps) => {
+const MembershipItem = ({ member, user }: MemberItemProps) => {
   const initials = `${member.User.firstName[0]}${member.User.lastName[0]}`.toUpperCase();
   const fullName = `${member.User.firstName} ${member.User.lastName}` + " " + `${user.id === member.User.id ? "(you)" : ""}`;
-  const router = useRouter();
-
-  const [deleteButton, deleteDialog] = UseConfirmDialog({
-    action: deleteMembership.bind(null, member.organizationId,member.User.id),
-    trigger: (isPending) => (
-      <Button variant="destructive">
-        {isPending ? (
-          <LucideLoaderCircle className="h-4 w-4 animate-spin" />
-        ) : (
-          <LucideLogOut className="h-4 w-4" />
-        )}
-      </Button>
-    ),
-    onSuccess: () => {
-      router.refresh();
-    },
-    description: `This action cannot be undone. Make sure you understand the consequences of delete the membership of the user ${fullName}.`,
-  });
-
+  const isSelf = user.id === member.User.id;
   return (
     <Card className="gap-0 py-0 overflow-hidden">
       <CardContent className="p-4 flex items-center gap-4">
@@ -77,9 +54,13 @@ const MembershipItem = ({ member,user}: MemberItemProps) => {
           <LucideCalendar className="h-3 w-3" />
           Joined {format(member.joinedAt, "MMM d, yyyy")}
         </span>
-        {deleteButton}
+        <DeleteMembershipButton
+          organizationId={member.organizationId}
+          userId={member.User.id}
+          fullName={fullName}
+          isSelf={isSelf}
+        />
       </CardContent>
-      {deleteDialog}
     </Card>
   );
 };
