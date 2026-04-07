@@ -18,8 +18,8 @@ export const selectActiveOrganizationPath = () => "/onboarding/select-active-org
 export const accountProfilePath = () => "/account/profile";
 export const accountPasswordPath = () => "/account/password";
 
-export const organizationsPath = () => "/organization";
-export const organizationCreatePath = () => "/organization/create";
+export const organizationsPath = () => "/organizations";
+export const organizationCreatePath = () => "/organizations/create";
 export const organizationPath = (organizationId: string) =>
   `${organizationsPath()}/${organizationId}`;
 export const organizationEditPath = (organizationId: string) =>

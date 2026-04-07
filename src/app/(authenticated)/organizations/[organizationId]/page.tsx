@@ -6,8 +6,9 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { organizationsPath} from "@/paths";
 import { Separator } from "@/components/ui/separator";
 import { OrganizationItem } from "@/features/organization/components/organization-item";
-import { MemberList } from "@/features/member/components/member-list";
 import { Heading } from "@/components/heading";
+import { MembershipList } from "@/features/membership/components/membership-list";
+import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 
 type OrganizationPageProps = {
   params: Promise<{
@@ -39,8 +40,8 @@ const OrganizationPage = async ({ params }:OrganizationPageProps) => {
         </section>
         <Separator />
         <section className="flex flex-col gap-4">
-          <Heading title="Members" />
-          <MemberList members={organization.memberships} />
+          <Heading title="Memberships" description="Manage members in your organization " />
+          <MembershipList members={organization.memberships}/>
         </section>
       </div>
     </div>

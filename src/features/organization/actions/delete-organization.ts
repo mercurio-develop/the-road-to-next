@@ -12,10 +12,6 @@ import { revalidatePath } from "next/cache";
 import { organizationsPath } from "@/paths";
 import { getOrganizationsByUser } from "@/features/organization/queries/get-organizations-by-user";
 
-const deleteOrganizationSchema = z.object({
-  id: z.string(),
-});
-
 export const deleteOrganization = async (
   id: string,
   _actionState: ActionState,

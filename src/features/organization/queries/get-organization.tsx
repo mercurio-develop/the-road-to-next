@@ -26,6 +26,7 @@ export const getOrganization = async (organizationId: string) => {
               id: true,
               username: true,
               email: true,
+              emailVerified: true,
               firstName: true,
               lastName: true,
             },

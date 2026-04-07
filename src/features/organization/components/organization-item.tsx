@@ -10,6 +10,7 @@ import {
   LucideCalendar,
   LucideHash,
   LucideLoaderCircle,
+  LucideLogOut,
   LucidePencil,
   LucideSquareArrowOutUpRight,
   LucideTrash,
@@ -30,6 +31,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { deleteMembership } from "@/features/membership/actions/delete-membership";
 
 type OrganizationItemProps = {
   hasActive?: boolean;
@@ -39,7 +41,7 @@ type OrganizationItemProps = {
     _count: { memberships: number };
     name: string;
     id: string;
-    membershipByUser?: Membership;
+    membershipByUser: Membership;
     memberships?: Membership[];
   };
 };
@@ -50,7 +52,7 @@ const OrganizationItem = ({
   organization,
   limitedAccess,
 }: OrganizationItemProps) => {
-  const isActive = organization?.membershipByUser?.isActive;
+  const isActive = organization.membershipByUser.isActive;
   const router = useRouter();
   const switchButton = (
     <OrganizationSwitchButton
@@ -64,6 +66,27 @@ const OrganizationItem = ({
       }
     />
   );
+
+  const [leaveMembershipButton, leaveMembershipDialog] = UseConfirmDialog({
+    action: deleteMembership.bind(
+      null,
+      organization.id,
+      organization.membershipByUser.userId,
+    ),
+    trigger: (isPending) => (
+      <Button variant="destructive">
+        {isPending ? (
+          <LucideLoaderCircle className="h-4 w-4 animate-spin" />
+        ) : (
+          <LucideLogOut className="h-4 w-4" />
+        )}
+      </Button>
+    ),
+    onSuccess: () => {
+      router.refresh();
+    },
+    description: `This action cannot be undone. Make sure you understand the consequences of leave the membership of organization: ${organization.name}`,
+  });
 
   const [deleteButton, deleteDialog] = UseConfirmDialog({
     action: deleteOrganization.bind(null, organization?.id),
@@ -169,7 +192,8 @@ const OrganizationItem = ({
     <>{switchButton}</>
   ) : (
     <>
-      {switchButton} {detailButton} {editButton} {deleteButton}
+      {switchButton} {detailButton} {editButton} {leaveMembershipButton}
+      {deleteButton}
     </>
   );
 
@@ -178,12 +202,12 @@ const OrganizationItem = ({
       <TableCell>{organization.id}</TableCell>
       <TableCell>{organization.name}</TableCell>
       <TableCell>
-        {organization.membershipByUser &&
-          format(organization.membershipByUser.joinedAt, "yyyy-MM-dd")}
+        {format(organization.membershipByUser.joinedAt, "yyyy-MM-dd")}
       </TableCell>
       <TableCell>{organization._count.memberships}</TableCell>
       <TableCell className="flex justify-end gap-x-2">{buttons}</TableCell>
       {deleteDialog}
+      {leaveMembershipDialog}
     </TableRow>
   );
 };
