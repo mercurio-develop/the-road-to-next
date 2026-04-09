@@ -9,7 +9,6 @@ import {
 import { ticketEditPath, ticketPath } from "@/paths";
 import { TICKET_ICONS } from "../constants";
 import {
-  LucideMoreVertical,
   LucidePencil,
   LucideSquareArrowOutUpRight,
 } from "lucide-react";
@@ -46,14 +45,7 @@ const TicketItem = async ({ ticket, comments, isDetail }: TicketItemProps) => {
   );
 
   const moreMenu = ticket.isOwner && (
-    <TicketMoreMenu
-      ticket={ticket}
-      trigger={
-        <Button size="icon" variant="outline">
-          <LucideMoreVertical className="h-4 w-4" />
-        </Button>
-      }
-    />
+    <TicketMoreMenu ticket={ticket} />
   );
 
   return (

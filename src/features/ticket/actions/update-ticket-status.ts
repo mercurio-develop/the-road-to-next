@@ -15,15 +15,13 @@ export const updateTicketStatus = async (id: string, status: TicketStatus) => {
   const { user }  = await getAuthOrRedirect();
 
   try {
-    if (!id) {
-      const ticket = await prisma.ticket.findUnique({
-        where: {
-          id,
-        },
-      });
-      if (!ticket || !isOwner(user, ticket)) {
-        return toActionState("ERROR", "No Authorized");
-      }
+    const ticket = await prisma.ticket.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!ticket || !isOwner(user, ticket)) {
+      return toActionState("ERROR", "No Authorized");
     }
     await prisma.ticket.update({
       where: {

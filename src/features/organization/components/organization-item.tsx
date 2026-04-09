@@ -24,6 +24,7 @@ import { DeleteOrganizationButton } from "@/features/organization/components/del
 import { EditOrganizationButton } from "@/features/organization/components/edit-organization-button";
 import { OrganizationDetailButton } from "@/features/organization/components/organization-detail-button";
 import { DeleteMembershipButton } from "@/features/membership/components/delete-membership-button";
+import { Button } from "@/components/ui/button";
 
 type OrganizationItemProps = {
   hasActive?: boolean;
@@ -45,6 +46,7 @@ const OrganizationItem = ({
   limitedAccess,
 }: OrganizationItemProps) => {
   const isActive = organization.membershipByUser.isActive;
+  const isAdmin = organization.membershipByUser.membershipRole === "ADMIN";
 
   const switchButton = (
     <OrganizationSwitchButton
@@ -57,6 +59,29 @@ const OrganizationItem = ({
         />
       }
     />
+  );
+
+  const placeholder = (
+    <Button size="icon" disabled className="disabled:opacity-0"/>
+  )
+
+  const buttons = limitedAccess ? (
+    <>{switchButton}</>
+  ) : (
+    <>
+      {switchButton}
+      {isAdmin && variant !== "card" ? <OrganizationDetailButton organizationId={organization.id} /> : placeholder}
+      {isAdmin ? <EditOrganizationButton organizationId={organization.id} /> : placeholder}
+      <DeleteMembershipButton
+        organizationId={organization.id}
+        userId={organization.membershipByUser.userId}
+        isMyself={true}
+      />
+      {isAdmin ? <DeleteOrganizationButton
+        organizationId={organization.id}
+        organizationName={organization.name}
+      /> : placeholder}
+    </>
   );
 
   if (variant === "card") {
@@ -76,17 +101,7 @@ const OrganizationItem = ({
           </div>
           <CardAction>
             <div className="flex items-center gap-2">
-              {switchButton}
-              <EditOrganizationButton organizationId={organization.id} />
-              <DeleteMembershipButton
-                organizationId={organization.id}
-                userId={organization.membershipByUser.userId}
-                isSelf={true}
-              />
-              <DeleteOrganizationButton
-                organizationId={organization.id}
-                organizationName={organization.name}
-              />
+              {buttons}
             </div>
           </CardAction>
         </CardHeader>
@@ -132,24 +147,7 @@ const OrganizationItem = ({
     );
   }
 
-  const buttons = limitedAccess ? (
-    <>{switchButton}</>
-  ) : (
-    <>
-      {switchButton}
-      <OrganizationDetailButton organizationId={organization.id} />
-      <EditOrganizationButton organizationId={organization.id} />
-      <DeleteMembershipButton
-        organizationId={organization.id}
-        userId={organization.membershipByUser.userId}
-        isSelf={true}
-      />
-      <DeleteOrganizationButton
-        organizationId={organization.id}
-        organizationName={organization.name}
-      />
-    </>
-  );
+
 
   return (
     <TableRow>

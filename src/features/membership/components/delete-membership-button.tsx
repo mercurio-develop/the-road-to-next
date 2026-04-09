@@ -10,15 +10,20 @@ type DeleteMembershipButtonProps = {
   organizationId: string;
   userId: string;
   fullName?: string;
-  isSelf?: boolean;
+  isMyself?: boolean;
 };
 
-const DeleteMembershipButton = ({ organizationId, userId, fullName, isSelf }: DeleteMembershipButtonProps) => {
+const DeleteMembershipButton = ({
+  organizationId,
+  userId,
+  fullName,
+  isMyself,
+}: DeleteMembershipButtonProps) => {
   const router = useRouter();
 
   const [button, dialog] = UseConfirmDialog({
     action: deleteMembership.bind(null, organizationId, userId),
-    pendingMessage: isSelf ? "Leaving organization..." : "Deleting member...",
+    pendingMessage: isMyself ? "Leaving organization..." : "Deleting member...",
     trigger: (isPending) => (
       <Button variant="destructive">
         {isPending ? (
@@ -31,7 +36,7 @@ const DeleteMembershipButton = ({ organizationId, userId, fullName, isSelf }: De
     onSuccess: () => {
       router.refresh();
     },
-    description: isSelf
+    description: isMyself
       ? "This action cannot be undone. You will leave the organization."
       : `This action cannot be undone. Make sure you understand the consequences of deleting the membership of ${fullName}.`,
   });

@@ -1,13 +1,15 @@
 import { prisma } from "@/lib/prisma";
-import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { notFound } from "next/navigation";
+import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-redirect";
 
 export const getOrganization = async (organizationId: string) => {
-  const { user } = await getAuthOrRedirect();
+  const { user } = await getAdminOrRedirect(organizationId);
 
-  const hasActive = await prisma.membership.count({
-    where: { userId: user.id, isActive: true },
-  }).then((count) => count > 0);
+  const hasActive = await prisma.membership
+    .count({
+      where: { userId: user.id, isActive: true },
+    })
+    .then((count) => count > 0);
 
   const organization = await prisma.organization.findUnique({
     where: {

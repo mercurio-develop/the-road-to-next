@@ -16,7 +16,7 @@ const users = [
     email: "orqodev@gmail.com",
     firstName: "Alejandro",
     lastName: "Fidanza",
-    emailVerified: false,
+    emailVerified: true,
   },
   {
     username: "mercuriodevelop",
@@ -109,6 +109,7 @@ const seed = async () => {
       userId: user.id,
       organizationId: dbOrganization.id,
       isActive: true,
+      membershipRole:user.username === "admin" ? "ADMIN" : "MEMBER",
     })),
   });
 

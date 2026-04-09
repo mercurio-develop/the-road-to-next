@@ -10,6 +10,7 @@ import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect"
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { organizationsPath } from "@/paths";
+import { getAdminOrRedirect } from "@/features/membership/queries/get-admin-or-redirect";
 
 const upsertOrganizationSchema = z.object({
   id: z.string().optional(),
@@ -41,6 +42,7 @@ export const upsertOrganization = async (
         return toActionState("ERROR", "Organization not found");
       }
 
+      await getAdminOrRedirect(organization.id)
       await prisma.organization.update({
         where: { id },
         data: { name },
@@ -56,6 +58,7 @@ export const upsertOrganization = async (
               create: {
                 userId: user.id,
                 isActive:true,
+                membershipRole:"ADMIN"
               },
             },
           },

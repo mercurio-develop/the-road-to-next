@@ -42,7 +42,7 @@ const OrganizationPage = async ({ params }:OrganizationPageProps) => {
           />
         </section>
         <Separator />
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-3">
           <Heading
             title="Memberships"
             description="Manage members in your organization "
