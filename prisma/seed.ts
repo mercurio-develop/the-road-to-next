@@ -117,6 +117,7 @@ const seed = async () => {
     data: tickets.map((ticket) => ({
       ...ticket,
       userId: dbUsers[getRandomNumber(dbUsers.length - 1)].id,
+      organizationId:dbOrganization.id,
     })),
   });
 

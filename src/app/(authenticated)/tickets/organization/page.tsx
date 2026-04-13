@@ -4,20 +4,21 @@ import { TicketList } from "@/features/ticket/components/ticket-list";
 import { Spinner } from "@/components/spinner";
 import { CardCompact } from "@/components/card-compact";
 import { TicketUpsertForm } from "@/features/ticket/components/ticket-upsert-form";
-import { getAuth } from "@/features/auth/queries/get-auth";
-import { SearchParams } from "nuqs/server"
+import { type SearchParams } from "nuqs/server";
 import { searchParamsCache } from "@/features/ticket/search-params";
 
-type TicketsPageProps = {
-  searchParams:Promise<SearchParams>;
-}
+type TicketsByOrganizationPageProps = {
+  searchParams: Promise<SearchParams>;
+};
 
-const TicketsPage = async ({searchParams}:TicketsPageProps) => {
-  const { user } = await getAuth()
+const TicketsByOrganizationPage = async ({ searchParams }: TicketsByOrganizationPageProps) => {
   return (
     <>
       <div className="flex-1 flex flex-col gap-y-8">
-        <Heading title="My Tickets" description="All your tickets at one place" />
+        <Heading
+          title="My Tickets"
+          description="All your tickets at one place"
+        />
         <CardCompact
           classname="w-full max-w-[420px] self-center"
           title="Create Ticket"
@@ -25,11 +26,14 @@ const TicketsPage = async ({searchParams}:TicketsPageProps) => {
           content={<TicketUpsertForm />}
         />
         <Suspense fallback={<Spinner />}>
-          <TicketList userId={user?.id} searchParams={searchParamsCache.parse(await searchParams)} byOrganization={true} />
+          <TicketList
+            byOrganization={false}
+            searchParams={searchParamsCache.parse(await searchParams)}
+          />
         </Suspense>
       </div>
     </>
   );
 };
 
-export default TicketsPage;
+export default TicketsByOrganizationPage;

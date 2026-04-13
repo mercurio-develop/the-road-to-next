@@ -9,7 +9,7 @@ const MIN = Number(process.env.INNGEST_WEEKLY_MIN ?? 0);
 
 export const weeklyReportFunction = inngest.createFunction(
   { id: "send-weekly-report" },
-  { cron: `TZ=${TZ} ${MIN} ${HOUR} * * 5` },
+  { cron: `TZ=${TZ} ${MIN} ${HOUR} * * 6` },
   async ({ step }) => {
     const result = await step.run("generate-weekly-digest", async () => {
       const { startUtc, endUtc } = getThisFridayWindow();

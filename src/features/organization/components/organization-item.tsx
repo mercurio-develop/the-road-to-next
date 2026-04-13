@@ -93,7 +93,14 @@ const OrganizationItem = ({
               <LucideBuilding2 className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-xl">{organization.name}</CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-xl">{organization.name}</CardTitle>
+                {isAdmin && (
+                  <span className="flex items-center gap-1 bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+                    Admin
+                  </span>
+                )}
+              </div>
               <CardDescription className="font-mono text-xs mt-0.5">
                 {organization.id}
               </CardDescription>

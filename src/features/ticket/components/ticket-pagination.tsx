@@ -25,7 +25,9 @@ const TicketPagination = ({ paginatedTicketMetadata }: TicketPaginationProps) =>
   useEffect(()=>{
     if (search === prevSearch.current) return;
     prevSearch.current = search
-    setPagination({...pagination,page:0})
+    if(pagination.page !== 0){
+      setPagination({...pagination,page:0})
+    }
   },[pagination,search,setPagination])
 
 

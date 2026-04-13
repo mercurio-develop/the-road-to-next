@@ -25,7 +25,7 @@ const MembershipList =async ({ members }: MemberListProps) => {
   const isAdmin = currentUserMembership?.membershipRole === "ADMIN";
 
   return (
-    <Table className="border-t">
+    <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[80px]"></TableHead>
