@@ -24,15 +24,18 @@ model Organization {
 }
 
 model Membership {
-  organization   Organization @relation(fields: [organizationId], references: [id],onDelete: Cascade)
+  organization   Organization   @relation(fields: [organizationId], references: [id],onDelete: Cascade)
   organizationId String
   userId         String
-  User           User         @relation(fields: [userId], references: [id])
+  User           User           @relation(fields: [userId], references: [id])
 
-  joinedAt       DateTime     @default(now())
-  isActive       Boolean      @default(false)
+  joinedAt       DateTime       @default(now())
+  isActive       Boolean        @default(true)
 
   membershipRole MembershipRole @default(MEMBER)
+
+  //permissions
+  canDeleteTicket Boolean       @default(true)
 
   @@id(name:"membershipId",[organizationId, userId])
   @@index([organizationId])

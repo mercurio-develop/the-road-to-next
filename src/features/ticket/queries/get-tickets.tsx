@@ -3,6 +3,8 @@ import { ParsedSearchParams } from "@/features/ticket/search-params";
 import { getAuth } from "@/features/auth/queries/get-auth";
 import { isOwner } from "@/features/auth/utils/is-owner";
 import { getActiveOrganization } from "@/features/organization/queries/get-active-organization";
+import { getActiveMembership } from "@/features/membership/queries/get-active-membership";
+import { getOrganizationsByUser } from "@/features/organization/queries/get-organizations-by-user";
 
 export const getTickets = async (
   userId: string | undefined,
@@ -10,6 +12,7 @@ export const getTickets = async (
 ) => {
   const { user } = await getAuth();
   const activeOrganization = await getActiveOrganization();
+
   const where = {
     userId,
     title: {
@@ -37,16 +40,28 @@ export const getTickets = async (
   ]);
 
   let userTotalCount = undefined;
-  if(searchParams.byOrganization && activeOrganization){
+  if (searchParams.byOrganization && activeOrganization) {
     userTotalCount = await prisma.ticket.count({ where: { userId } });
   }
 
+  const organizationsByUser = await getOrganizationsByUser();
 
   return {
-    list: tickets.map((ticket) => ({
-      ...ticket,
-      isOwner: isOwner(user, ticket),
-    })),
+    list: tickets.map((ticket) => {
+      const organization = organizationsByUser.find(
+        (org) => org.id === ticket.organizationId,
+      );
+
+      return {
+        ...ticket,
+        isOwner: isOwner(user, ticket),
+        permissions: {
+          canDeleteTicket:
+            isOwner(user, ticket) &&
+            !!organization?.membershipByUser.canDeleteTicket,
+        },
+      };
+    }),
     metadata: {
       count,
       hasNextPage: count > skip + take,

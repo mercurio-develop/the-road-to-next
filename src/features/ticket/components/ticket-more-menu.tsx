@@ -1,6 +1,6 @@
 "use client";
 
-import { Ticket, TicketStatus } from "@prisma/client";
+import { Prisma, Ticket, TicketStatus } from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,9 +18,16 @@ import { UseConfirmDialog } from "@/components/confirm-dialog";
 import { deleteTicket } from "@/features/ticket/actions/delete-ticket";
 import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
+import TicketGetPayload = Prisma.TicketGetPayload;
+import { TicketWithMetadata } from "@/features/ticket/type";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type TicketMoreMenuProps = {
-  ticket: Ticket;
+  ticket: TicketWithMetadata;
 };
 
 const TicketMoreMenu = ({ ticket }: TicketMoreMenuProps) => {
@@ -29,7 +36,10 @@ const TicketMoreMenu = ({ ticket }: TicketMoreMenuProps) => {
   const [deleteButton, deleteDialog] = UseConfirmDialog({
     action: deleteTicket.bind(null, ticket.id),
     trigger: (isPending) => (
-      <DropdownMenuItem className="text-destructive focus:text-destructive">
+      <DropdownMenuItem
+        className="text-destructive focus:text-destructive"
+        disabled={!ticket.permissions.canDeleteTicket}
+      >
         <LucideTrash className="mr-2 h-4 w-4" />
         <span>{isPending ? "Deleting..." : "Delete"}</span>
       </DropdownMenuItem>
@@ -49,31 +59,45 @@ const TicketMoreMenu = ({ ticket }: TicketMoreMenuProps) => {
       }
     });
   };
-
   return (
     <>
-      {deleteDialog}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button size="icon" variant="outline" disabled={isTransitionPending}>
             <LucideMoreVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end">
+        <DropdownMenuContent className="w-36" align="end">
           <DropdownMenuRadioGroup
             value={ticket.status}
             onValueChange={handleUpdateTicketStatus}
           >
-            {(Object.keys(TICKET_STATUS_LABELS) as Array<TicketStatus>).map((key) => (
-              <DropdownMenuRadioItem key={key} value={key} disabled={isTransitionPending}>
-                {TICKET_STATUS_LABELS[key]}
-              </DropdownMenuRadioItem>
-            ))}
+            {(Object.keys(TICKET_STATUS_LABELS) as Array<TicketStatus>).map(
+              (key) => (
+                <DropdownMenuRadioItem
+                  key={key}
+                  value={key}
+                  disabled={isTransitionPending}
+                >
+                  {TICKET_STATUS_LABELS[key]}
+                </DropdownMenuRadioItem>
+              ),
+            )}
           </DropdownMenuRadioGroup>
           <DropdownMenuSeparator />
-          {deleteButton}
+          <Tooltip>
+            <TooltipTrigger asChild={ticket.permissions.canDeleteTicket}>
+              {deleteButton}
+            </TooltipTrigger>
+            {!ticket.permissions.canDeleteTicket && (
+              <TooltipContent>
+                <span>You do not have permission to delete this ticket.</span>
+              </TooltipContent>
+            )}
+          </Tooltip>
         </DropdownMenuContent>
       </DropdownMenu>
+      {deleteDialog}
     </>
   );
 };

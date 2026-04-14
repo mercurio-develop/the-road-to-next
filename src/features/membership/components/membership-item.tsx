@@ -3,7 +3,9 @@
 import { User, Membership } from "@prisma/client";
 import { format } from "date-fns";
 import {
+  LucideBan,
   LucideCalendar,
+  LucideCheck,
   LucideCheckCircle,
   LucideMail,
   LucideMoreVertical,
@@ -13,6 +15,7 @@ import { DeleteMembershipButton } from "@/features/membership/components/delete-
 import { TableCell, TableRow } from "@/components/ui/table";
 import { UpdateMembershipRoleButton } from "@/features/membership/components/update-membership-role-button";
 import { Button } from "@/components/ui/button";
+import { PermissionToggleButton } from "@/features/membership/components/permission-toggle-button";
 
 export type BasicUser = {
   id: string;
@@ -93,6 +96,9 @@ const MembershipItem = ({ member, user, isAdmin }: MemberItemProps) => {
         <span className="text-xs font-medium uppercase text-muted-foreground px-2 py-1 border rounded-md">
           {member.membershipRole}
         </span>
+      </TableCell>
+      <TableCell>
+        <div className="flex justify-center  gap-2"><PermissionToggleButton userId={member.userId} organizationId={member.organizationId} permissionKey="canDeleteTicket" permissionValue={member.canDeleteTicket} /></div>
       </TableCell>
       <TableCell className="flex justify-end gap-x-2">{buttons}</TableCell>
     </TableRow>

@@ -32,12 +32,18 @@ const MembershipList =async ({ members }: MemberListProps) => {
           <TableHead>User</TableHead>
           <TableHead>Joined</TableHead>
           <TableHead>Role</TableHead>
+          <TableHead className="w-[50px]">Can Delete Ticket?</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {members.map((member, index) => (
-          <MembershipItem key={index} member={member} user={user} isAdmin={isAdmin} />
+          <MembershipItem
+            key={index}
+            member={member}
+            user={user}
+            isAdmin={isAdmin}
+          />
         ))}
       </TableBody>
     </Table>

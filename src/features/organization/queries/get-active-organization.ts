@@ -16,6 +16,7 @@ export const getActiveOrganization = cache(async () => {
         },
       },
     },
+
   });
 
   return activeOrganization;
