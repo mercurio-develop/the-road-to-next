@@ -9,6 +9,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ReactQueryProvider } from "@/app/_providers/react-query/react-query-provider";
 import { ActiveOrganizationBar } from "@/features/organization/components/active-organization-bar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <ReactQueryProvider>
+          <TooltipProvider>
           <Header />
           <main
             className="
@@ -56,6 +58,7 @@ export default function RootLayout({
           </main>
           <ActiveOrganizationBar />
           <Toaster expand />
+          </TooltipProvider>
           </ReactQueryProvider>
         </ThemeProvider>
       </body>

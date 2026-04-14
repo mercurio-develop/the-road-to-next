@@ -3,7 +3,6 @@ import { ParsedSearchParams } from "@/features/ticket/search-params";
 import { getAuth } from "@/features/auth/queries/get-auth";
 import { isOwner } from "@/features/auth/utils/is-owner";
 import { getActiveOrganization } from "@/features/organization/queries/get-active-organization";
-import { getActiveMembership } from "@/features/membership/queries/get-active-membership";
 import { getOrganizationsByUser } from "@/features/organization/queries/get-organizations-by-user";
 
 export const getTickets = async (
@@ -59,6 +58,9 @@ export const getTickets = async (
           canDeleteTicket:
             isOwner(user, ticket) &&
             !!organization?.membershipByUser.canDeleteTicket,
+          canUpdateTicket:
+            isOwner(user, ticket) &&
+            !!organization?.membershipByUser.canUpdateTicket,
         },
       };
     }),

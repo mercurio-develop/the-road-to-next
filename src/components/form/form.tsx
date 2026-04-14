@@ -1,3 +1,5 @@
+"use client";
+
 import { useActionFeedback } from "@/components/form/hooks/use-action-feedback";
 import { toast } from "sonner";
 import { ActionState } from "@/components/form/utils/to-action-state";

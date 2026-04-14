@@ -98,7 +98,24 @@ const MembershipItem = ({ member, user, isAdmin }: MemberItemProps) => {
         </span>
       </TableCell>
       <TableCell>
-        <div className="flex justify-center  gap-2"><PermissionToggleButton userId={member.userId} organizationId={member.organizationId} permissionKey="canDeleteTicket" permissionValue={member.canDeleteTicket} /></div>
+        <div className="flex justify-center  gap-2">
+          <PermissionToggleButton
+            userId={member.userId}
+            organizationId={member.organizationId}
+            permissionKey="canDeleteTicket"
+            permissionValue={member.canDeleteTicket}
+          />
+        </div>
+      </TableCell>
+      <TableCell>
+        <div className="flex justify-center  gap-2">
+          <PermissionToggleButton
+            userId={member.userId}
+            organizationId={member.organizationId}
+            permissionKey="canUpdateTicket"
+            permissionValue={member.canUpdateTicket}
+          />
+        </div>
       </TableCell>
       <TableCell className="flex justify-end gap-x-2">{buttons}</TableCell>
     </TableRow>

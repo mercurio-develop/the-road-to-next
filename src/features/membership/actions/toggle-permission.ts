@@ -10,7 +10,7 @@ import { organizationPath } from "@/paths";
 export const togglePermission = async ({userId,organizationId,permissionKey}:{
   userId: string,
   organizationId: string,
-  permissionKey: "canDeleteTicket",
+  permissionKey: "canDeleteTicket" | "canUpdateTicket",
 }) => {
   await getAdminOrRedirect(organizationId);
   const where = {
@@ -24,10 +24,11 @@ export const togglePermission = async ({userId,organizationId,permissionKey}:{
 
   if (!membership) return toActionState("ERROR", "Membership not found");
 
+  console.log(membership)
   await prisma.membership.update({
     where,
     data: {
-      [permissionKey]: membership[permissionKey] !== true,
+      [permissionKey]: !membership[permissionKey],
     },
   });
 

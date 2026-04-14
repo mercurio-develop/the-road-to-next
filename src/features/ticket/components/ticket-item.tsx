@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   Card,
   CardHeader,
@@ -6,19 +5,13 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { ticketEditPath, ticketPath } from "@/paths";
 import { TICKET_ICONS } from "../constants";
-import {
-  LucidePencil,
-  LucideSquareArrowOutUpRight,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { clsx } from "clsx";
 import { toCurrencyFromCent } from "@/utils/currency";
 import { TicketMoreMenu } from "@/features/ticket/components/ticket-more-menu";
 import { TicketWithMetadata } from "@/features/ticket/type";
-
-
+import { TicketEditButton } from "@/features/ticket/components/ticket-edit-button";
+import { TicketDetailButton } from "@/features/ticket/components/ticket-detail-button";
 
 type TicketItemProps = {
   ticket: TicketWithMetadata;
@@ -27,25 +20,13 @@ type TicketItemProps = {
 };
 
 const TicketItem = async ({ ticket, comments, isDetail }: TicketItemProps) => {
-
-  const detailButton = (
-    <Button asChild variant="outline" size="icon">
-      <Link prefetch href={ticketPath(ticket.id)}>
-        <LucideSquareArrowOutUpRight className="h-4 w-4" />
-      </Link>
-    </Button>
-  );
-
-  const editButton =  ticket.isOwner && (
-    <Button asChild variant="outline" size="icon">
-      <Link prefetch href={ticketEditPath(ticket.id)}>
-        <LucidePencil />
-      </Link>
-    </Button>
-  );
-
   const moreMenu = ticket.isOwner && (
-    <TicketMoreMenu ticket={ticket} />
+    <TicketMoreMenu
+      ticketId={ticket.id}
+      status={ticket.status}
+      canUpdate={ticket.permissions.canUpdateTicket}
+      canDelete={ticket.permissions.canDeleteTicket}
+    />
   );
 
   return (
@@ -88,13 +69,21 @@ const TicketItem = async ({ ticket, comments, isDetail }: TicketItemProps) => {
         <div className="flex flex-col gap-y-1">
           {isDetail ? (
             <>
-              {editButton}
+              <TicketEditButton
+                ticketId={ticket.id}
+                isOwner={ticket.isOwner}
+                canUpdate={ticket.permissions.canUpdateTicket}
+              />
               {moreMenu}
             </>
           ) : (
             <>
-              {detailButton}
-              {editButton}
+              <TicketDetailButton ticketId={ticket.id} />
+              <TicketEditButton
+                ticketId={ticket.id}
+                isOwner={ticket.isOwner}
+                canUpdate={ticket.permissions.canUpdateTicket}
+              />
             </>
           )}
         </div>

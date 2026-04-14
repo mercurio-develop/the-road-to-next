@@ -14,6 +14,7 @@ import { setCookieByKey } from "@/actions/cookies";
 import { toCent } from "@/utils/currency";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { isOwner } from "@/features/auth/utils/is-owner";
+import { getTicketPermissions } from "@/features/ticket/permissions/get-ticket-permissions";
 
 const upserTicketSchema = z.object({
   title: z.string().min(1).max(191),
@@ -39,6 +40,15 @@ export const upsertTicket = async (
       if (!ticket || !isOwner(user, ticket)) {
         return toActionState("ERROR", "No Authorized");
       }
+
+      const permissions = await getTicketPermissions({
+        userId: user.id,
+        organizationId: ticket.organizationId,
+      });
+
+      if (!permissions.canUpdateTicket) {
+        return toActionState("ERROR", "No Authorized");
+      }
     }
 
     const data = upserTicketSchema.parse({
@@ -48,21 +58,19 @@ export const upsertTicket = async (
       bounty: formData.get("bounty"),
     });
 
-    if (user) {
-      const dbData = {
-        ...data,
-        bounty: toCent(data.bounty),
-        userId: user.id,
-      };
-      await prisma.ticket.upsert({
-        where: { id: id || "" },
-        update: dbData,
-        create: {
-          ...dbData,
-          organizationId: activeOrganization?.id as string,
-        },
-      });
-    }
+    const dbData = {
+      ...data,
+      bounty: toCent(data.bounty),
+      userId: user.id,
+    };
+    await prisma.ticket.upsert({
+      where: { id: id || "" },
+      update: dbData,
+      create: {
+        ...dbData,
+        organizationId: activeOrganization?.id as string,
+      },
+    });
   } catch (error) {
     return fromErrorToActionState(error, formData);
   }

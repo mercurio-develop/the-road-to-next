@@ -10,6 +10,7 @@ import {
 } from "@/components/form/utils/to-action-state";
 import { getAuthOrRedirect } from "@/features/auth/queries/get-auth-or-redirect";
 import { isOwner } from "@/features/auth/utils/is-owner";
+import { getTicketPermissions } from "@/features/ticket/permissions/get-ticket-permissions";
 
 export const updateTicketStatus = async (id: string, status: TicketStatus) => {
   const { user }  = await getAuthOrRedirect();
@@ -23,6 +24,13 @@ export const updateTicketStatus = async (id: string, status: TicketStatus) => {
     if (!ticket || !isOwner(user, ticket)) {
       return toActionState("ERROR", "No Authorized");
     }
+
+    const permissions = await getTicketPermissions({userId: user.id,organizationId: ticket.organizationId})
+
+    if (!permissions.canUpdateTicket) {
+      return toActionState("ERROR", "No Authorized");
+    }
+
     await prisma.ticket.update({
       where: {
         id,

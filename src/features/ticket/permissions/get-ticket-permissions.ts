@@ -11,6 +11,7 @@ export const getTicketPermissions = async ({
   if (!userId || !organizationId) {
     return {
       canDeleteTicket: false,
+      canUpdateTicket: false,
     };
   }
 
@@ -26,10 +27,12 @@ export const getTicketPermissions = async ({
   if (!membership) {
     return {
       canDeleteTicket: false,
+      canUpdateTicket: false,
     };
   }
 
   return {
     canDeleteTicket: membership.canDeleteTicket,
+    canUpdateTicket: membership.canUpdateTicket,
   };
 };

@@ -1,57 +1,48 @@
 "use client";
 
-import { Prisma, Ticket, TicketStatus } from "@prisma/client";
+import { TicketStatus } from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LucideTrash, LucideMoreVertical } from "lucide-react";
+import { LucideMoreVertical } from "lucide-react";
 import { TICKET_STATUS_LABELS } from "@/features/ticket/constants";
 import { updateTicketStatus } from "@/features/ticket/actions/update-ticket-status";
 import { toast } from "sonner";
-import { UseConfirmDialog } from "@/components/confirm-dialog";
-import { deleteTicket } from "@/features/ticket/actions/delete-ticket";
 import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
-import TicketGetPayload = Prisma.TicketGetPayload;
-import { TicketWithMetadata } from "@/features/ticket/type";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { TicketDeleteMenuItem } from "@/features/ticket/components/ticket-delete-menu-item";
 
 type TicketMoreMenuProps = {
-  ticket: TicketWithMetadata;
+  ticketId: string;
+  status: TicketStatus;
+  canUpdate: boolean;
+  canDelete: boolean;
 };
 
-const TicketMoreMenu = ({ ticket }: TicketMoreMenuProps) => {
+const TicketMoreMenu = ({
+  ticketId,
+  status,
+  canUpdate,
+  canDelete,
+}: TicketMoreMenuProps) => {
   const [isTransitionPending, startTransition] = useTransition();
-
-  const [deleteButton, deleteDialog] = UseConfirmDialog({
-    action: deleteTicket.bind(null, ticket.id),
-    trigger: (isPending) => (
-      <DropdownMenuItem
-        className="text-destructive focus:text-destructive"
-        disabled={!ticket.permissions.canDeleteTicket}
-      >
-        <LucideTrash className="mr-2 h-4 w-4" />
-        <span>{isPending ? "Deleting..." : "Delete"}</span>
-      </DropdownMenuItem>
-    ),
-  });
 
   const handleUpdateTicketStatus = (value: string) => {
     const newStatus = value as TicketStatus;
-    if (newStatus === ticket.status) return;
+    if (newStatus === status) return;
 
     startTransition(async () => {
-      const result = await updateTicketStatus(ticket.id, newStatus);
+      const result = await updateTicketStatus(ticketId, newStatus);
       if (result.status === "SUCCESS") {
         toast.success(result.message);
       } else {
@@ -69,35 +60,39 @@ const TicketMoreMenu = ({ ticket }: TicketMoreMenuProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-36" align="end">
           <DropdownMenuRadioGroup
-            value={ticket.status}
+            value={status}
             onValueChange={handleUpdateTicketStatus}
           >
             {(Object.keys(TICKET_STATUS_LABELS) as Array<TicketStatus>).map(
               (key) => (
-                <DropdownMenuRadioItem
-                  key={key}
-                  value={key}
-                  disabled={isTransitionPending}
-                >
-                  {TICKET_STATUS_LABELS[key]}
-                </DropdownMenuRadioItem>
+                <Tooltip key={key}>
+                  <TooltipTrigger asChild={canUpdate}>
+                    <DropdownMenuRadioItem
+                      key={key}
+                      value={key}
+                      disabled={isTransitionPending || !canUpdate}
+                    >
+                      {TICKET_STATUS_LABELS[key]}
+                    </DropdownMenuRadioItem>
+                  </TooltipTrigger>
+                  {!canUpdate && (
+                    <TooltipContent>
+                      <span>
+                        You do not have permission to update this ticket.
+                      </span>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
               ),
             )}
           </DropdownMenuRadioGroup>
           <DropdownMenuSeparator />
-          <Tooltip>
-            <TooltipTrigger asChild={ticket.permissions.canDeleteTicket}>
-              {deleteButton}
-            </TooltipTrigger>
-            {!ticket.permissions.canDeleteTicket && (
-              <TooltipContent>
-                <span>You do not have permission to delete this ticket.</span>
-              </TooltipContent>
-            )}
-          </Tooltip>
+          <TicketDeleteMenuItem
+            ticketId={ticketId}
+            canDelete={canDelete}
+          />
         </DropdownMenuContent>
       </DropdownMenu>
-      {deleteDialog}
     </>
   );
 };

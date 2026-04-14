@@ -33,6 +33,7 @@ const MembershipList =async ({ members }: MemberListProps) => {
           <TableHead>Joined</TableHead>
           <TableHead>Role</TableHead>
           <TableHead className="w-[50px]">Can Delete Ticket?</TableHead>
+          <TableHead className="w-[50px]">Can Update Ticket?</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
